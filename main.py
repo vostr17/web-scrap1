@@ -1,3 +1,4 @@
+import sys
 from sys import flags
 
 import requests
@@ -34,7 +35,11 @@ def search_keywords(key_words, raw_list):
 
 url = 'https://habr.com/ru/articles/'
 headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 YaBrowser/25.12.0.0 Safari/537.36'}
-response = requests.get(url, headers=headers)
+try:
+    response = requests.get(url, headers=headers)
+except requests.RequestException as e:
+    print(f'Ошибка при запросе: {e}')
+    sys.exit(0)
 
 
 KEYWORDS = ['дизайн', 'фото', 'web', 'python']
@@ -88,21 +93,15 @@ for article in articles:
     result1.append(article_abstract)
 
     result2.append(result1)
-    article_title = ''
-    article_url = ''
     article_tags = []
     article_abstract = []
     result1 = []
 
-
-result1 = []
-result3 = []
-
 result1 = search_keywords(KEYWORDS, result2)
-
+print(len(result1))
 # Вывод результата в формате <дата> - <название статьи> - <ссылка>
-for article in result1:
-    result3 = [f'{article[2]} - {''.join(article[0])} - {article[1]}'
+
+result3 = [f'{article[2]} - {''.join(article[0])} - {article[1]}'
             for article in result1]
 print(*result3, sep='\n')
 
